@@ -35,6 +35,8 @@ questions = [
 
 weights = [3, 2, 3, 4, 5, 2, 3, 4, 2, 4, 3, 5, 5]
 
+combine_output = 0
+
 #for i in range (0, len(weights)):
 #  weights[i] = weights[i]*10;
 
@@ -72,9 +74,8 @@ data = pd.read_csv('copenhagen_burnout_inventory_dataset.csv')
 X = data.drop(['Total Score', 'Percentage Likely to Burnout'], axis=1)
 y = data['Percentage Likely to Burnout']
 
-
-#X = np.column_stack((X, total_scores)) #Uncomment to combime Actual output with input set to increate accuracy 
-
+if combine_output == True:
+  X = np.column_stack((X, total_scores))     #Uncomment to combime Actual output with input set to increate accuracy 
 # Split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -108,7 +109,8 @@ data = pd.read_csv('copenhagen_burnout_inventory_dataset.csv')
 X = data.drop(['Total Score', 'Percentage Likely to Burnout'], axis=1)
 y = data['Percentage Likely to Burnout']
 
-#X = np.column_stack((X, total_scores))    #Uncomment to combime Actual output with input set to increate accuracy 
+if combine_output == True:
+  X = np.column_stack((X, total_scores))     #Uncomment to combime Actual output with input set to increate accuracy 
 
 # Split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -141,7 +143,8 @@ data = pd.read_csv('copenhagen_burnout_inventory_dataset.csv')
 X = data.drop(['Total Score', 'Percentage Likely to Burnout'], axis=1)
 y = data['Percentage Likely to Burnout']
 
-#X = np.column_stack((X, total_scores))       #Uncomment to combime Actual output with input set to increate accuracy 
+if combine_output == True:
+  X = np.column_stack((X, total_scores))     #Uncomment to combime Actual output with input set to increate accuracy 
 
 # Split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -175,7 +178,8 @@ data = pd.read_csv('copenhagen_burnout_inventory_dataset.csv')
 X = data.drop(['Total Score', 'Percentage Likely to Burnout'], axis=1)
 y = data['Percentage Likely to Burnout']
 
-#X = np.column_stack((X, total_scores))       #Uncomment to combime Actual output with input set to increate accuracy 
+if combine_output == True:
+  X = np.column_stack((X, total_scores))     #Uncomment to combime Actual output with input set to increate accuracy 
 
 # Split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -208,7 +212,8 @@ data = pd.read_csv('copenhagen_burnout_inventory_dataset.csv')
 X = data.drop(['Total Score', 'Percentage Likely to Burnout'], axis=1)
 y = data['Percentage Likely to Burnout']
 
-#X = np.column_stack((X, total_scores))    #Uncomment to combime Actual output with input set to increate accuracy 
+if combine_output == True:
+  X = np.column_stack((X, total_scores))     #Uncomment to combime Actual output with input set to increate accuracy 
 
 # Split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -249,6 +254,11 @@ loaded_model = loaded_model_MLP
 # Example input row for prediction
 idx = 570
 
+if combine_output != True:
+  input_row = X_test.iloc[idx]
+else:
+  input_row = X_test[idx]
+
 #input_row = X_test.iloc[idx]
 input_row = X_test.iloc[idx]
 
@@ -286,7 +296,10 @@ data = pd.read_csv('copenhagen_burnout_inventory_dataset.csv')
 # Select a specific input row (for example, the first row)
 input_row = X.iloc[0].values.reshape(1, -1)
 
-#input_row = X.iloc.reshape(1, -1)
+if combine_output != True:
+  input_row = X.iloc[0].values.reshape(1, -1)
+else:
+  input_row = X[0].reshape(1, -1)
 
 # Predict the burnout percentage for the input row
 predicted_percentage = loaded_model.predict(input_row)
@@ -309,10 +322,17 @@ plt.show()
 ###############################################################################################  Custom Test(Single Test Case)
 
 
-mdl = joblib.load('LR_burnout_model.joblib')
+mdl = joblib.load('VR_burnout_model.joblib')
 
 input_row_x = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 print(input_row_x)
+total_scores = np.dot(input_row_x, weights)
+
+max_score = sum([5 * w for w in weights])
+percentages = (total_scores / max_score) * 100
+if combine_output == True:
+  input_row_x = np.hstack((input_row_x, [[actual_percentage]]))
+
 predicted_percentage_x = mdl.predict(input_row_x)
 print(predicted_percentage_x)
 
@@ -320,6 +340,13 @@ print(predicted_percentage_x)
 
 input_row_y = [[5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]]
 print(input_row_y)
+total_scores = np.dot(input_row_y, weights)
+
+max_score = sum([5 * w for w in weights])
+percentages = (total_scores / max_score) * 100
+if combine_output == True:
+  input_row_y = np.hstack((input_row_y, [[actual_percentage]]))
+
 predicted_percentage_y = mdl.predict(input_row_y)
 print(predicted_percentage_y)
 
