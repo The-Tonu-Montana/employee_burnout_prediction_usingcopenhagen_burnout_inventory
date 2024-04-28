@@ -37,8 +37,8 @@ weights = [3, 2, 3, 4, 5, 2, 3, 4, 2, 4, 3, 5, 5]
 
 combine_output = 0
 
-for i in range (0, len(weights)):
-  weights[i] = weights[i]*10
+#for i in range (0, len(weights)):
+#  weights[i] = weights[i]*10
 
 
 # Generate random responses for each participant
